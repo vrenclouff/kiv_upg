@@ -32,7 +32,7 @@ public class Canvas extends JFrame {
 	public Canvas(){
 		this.regioComponent = this.readRegions();
 		this.calculateLimits();
-		this.width = 500;
+		this.width = 600;
 		this.height = 600;
 		
 	}
@@ -41,7 +41,7 @@ public class Canvas extends JFrame {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D)drawingArea.getGraphics();
 		for(int i = 0; i < regioComponent.length; i++){
-		regioComponent[i].draw(g2, drawingArea.getWidth(), drawingArea.getHeight(), 30, max, min);
+		regioComponent[i].draw(g2, drawingArea.getWidth(), drawingArea.getHeight(), 400, max, min);
 		}
 	}
 	
@@ -71,6 +71,8 @@ public class Canvas extends JFrame {
 		String singlePoint[];
 		String nameRegion;
 		Scanner sc = null;
+		Color color;
+		int dev = 1;
 		
 		try {sc = new Scanner(new File(file));}
 		catch (Exception e) {
@@ -91,7 +93,10 @@ public class Canvas extends JFrame {
 					singlePoint = pointsString[i].split(",");
 					points[i] = new Point2D.Double(Double.parseDouble(singlePoint[1]), Double.parseDouble(singlePoint[0]));
 				}
-				region.add(new RegionComponent(nameRegion, new Color(255,255,255), points));
+				if((dev++)%2 == 0) color = new Color(118,236,185);
+				else color = new Color(2,185,106);
+				
+				region.add(new RegionComponent(nameRegion, color, points));
 			}
 		}
 		catch (Exception e) {

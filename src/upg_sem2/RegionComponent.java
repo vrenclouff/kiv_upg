@@ -26,10 +26,19 @@ public class RegionComponent {
 	public void draw(Graphics2D g2, int windowWidth, int windowHeight, int padding, Point2D.Double max, Point2D.Double min) {
 		int regionWidth = windowWidth - 2*padding;
 		int regionHeight = windowHeight - 2*padding;
+		
+		regionWidth = 40;
+		regionHeight = 40;
  		
 		this.createTransformedRegionPath(regionWidth, regionHeight, max, min);
 		
+		AffineTransform origTransform = g2.getTransform();
+		g2.translate(padding, padding);
+		g2.rotate(180*Math.PI/180);
+		
 		this.drawRegion(g2, regionWidth, regionHeight);
+		
+		g2.setTransform(origTransform);
 	}	
 	
 	private void createTransformedRegionPath(int width, int height, Point2D.Double max, Point2D.Double min) {
@@ -55,9 +64,9 @@ public class RegionComponent {
 	
 	private void drawRegion(Graphics2D g2, int width, int height) {		
 		
-		Font font = new Font("Arial", Font.BOLD, 12);
-		g2.setFont(font);
-		g2.setStroke(new BasicStroke(2));
+//		Font font = new Font("Arial", Font.BOLD, 12);
+//		g2.setFont(font);
+		g2.setStroke(new BasicStroke(1));
 
 		g2.setColor(this.color);
 		g2.fill(regionPath);
