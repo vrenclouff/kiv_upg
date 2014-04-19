@@ -13,14 +13,14 @@ public class GetJsonFile {
 	public Wrap importJson(){	 
 		Gson gson = new Gson();
 		try {
-			BufferedReader br = new BufferedReader(new FileReader("file.json"));
+			BufferedReader br = new BufferedReader(new FileReader("bin/upg_sem2/data/file.json"));
 			DataObject obj = gson.fromJson(br, DataObject.class);
 			return obj.getWrap();
 		}
 		catch (IOException e) {
 			Component parentComponent = null;
-			JOptionPane.showConfirmDialog(parentComponent, "JSON file not found", "ERROR", JOptionPane.CLOSED_OPTION, JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
+			JOptionPane.showConfirmDialog(parentComponent, "JSON file not found \n Program will be closed", "ERROR", JOptionPane.CLOSED_OPTION, JOptionPane.ERROR_MESSAGE);
+			System.exit(1);
 		}
 		return null;
 	}

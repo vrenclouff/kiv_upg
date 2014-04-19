@@ -6,7 +6,10 @@ public class Main {
 		GetJsonFile json = new GetJsonFile();
 		Wrap wraper = json.importJson();
 
-		System.out.println(wraper.getYears()[13].getYear());
+		System.out.println(wraper.getYears()[12].getYear());
+		
+		Canvas canvas = new Canvas();
+		canvas.run();
 	}
 }
 	

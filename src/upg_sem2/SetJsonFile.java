@@ -13,7 +13,7 @@ public class SetJsonFile {
 	String json = gson.toJson(obj);
  
 	try {
-		FileWriter writer = new FileWriter("file.json");
+		FileWriter writer = new FileWriter("bin/upg_sem2/data/file.json");
 		writer.write(json);
 		writer.close();
 	}
