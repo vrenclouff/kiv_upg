@@ -1,8 +1,6 @@
 package upg_sem2;
 
 import java.awt.Component;
-import java.util.Arrays;
-
 import javax.swing.JOptionPane;
 
 public class Main {
@@ -60,8 +58,7 @@ public class Main {
 		
 		System.out.println(wraper.getYears()[12].getYear());
 		
-		Canvas canvas = new Canvas();
-		canvas.run();
+		Canvas canvas = new Canvas(wraper, arg);
 	}
 }
 	

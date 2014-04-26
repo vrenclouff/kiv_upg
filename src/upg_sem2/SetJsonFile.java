@@ -16,6 +16,7 @@ public class SetJsonFile {
 		FileWriter writer = new FileWriter("bin/upg_sem2/data/file.json");
 		writer.write(json);
 		writer.close();
+		System.out.println("done");
 	}
 	catch (IOException e) {e.printStackTrace();} 
     }

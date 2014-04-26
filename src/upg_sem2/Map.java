@@ -16,17 +16,21 @@ public class Map extends JPanel {
 	
 	
 	private static final long serialVersionUID = 1L;
-	final RegionComponent [] regioComponent;
+	RegionComponent [] regioComponent;
 	private Point2D.Double max;
 	private Point2D.Double min;
-	int width = 600;
+	int width = 700;
 	int height = 600;
+	Wrap data;
+	int year;
+	int index;
 	
-	public Map(){
+	public Map(Wrap data, int indexYear){
 		this.regioComponent = this.readRegions();
 		this.calculateLimits();
-		
-		 
+		this.data = data;
+		this.year = data.getYears()[indexYear].getYear();
+		this.index = indexYear;
 		
 		this.setSize(width, height);
 		this.setPreferredSize(this.getSize());
@@ -37,10 +41,12 @@ public class Map extends JPanel {
 		Graphics2D g2 = (Graphics2D) g;
 		
 		for(int i = 0; i < regioComponent.length; i++){
-			regioComponent[i].draw(g2, getSize().width, getSize().height, 400, max, min);
+			regioComponent[i].draw(g2, getSize().width, getSize().height, 300, max, min);
 		}
-	}
-	
+//		System.out.println(year);
+		g2.drawString(String.valueOf(year), 10, 10);
+	}	
+
 	private void calculateLimits() {
 		
 		max = (Point2D.Double) regioComponent[0].getPoints()[0].clone();
@@ -56,7 +62,7 @@ public class Map extends JPanel {
 		}
 	}
 	
-	public RegionComponent[] readRegions(){
+	private RegionComponent[] readRegions(){
 		ArrayList<RegionComponent> region = new ArrayList<>();
 		
 		String file = "bin/upg_sem2/data/kraje_cr.txt";
