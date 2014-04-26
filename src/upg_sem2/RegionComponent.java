@@ -47,10 +47,11 @@ public class RegionComponent {
 		double convertX = width / (max.x - min.x);
 		double convertY = height / (max.y - min.y);
 		double convert = convertX > convertY ? convertY : convertX; 
-
+		
+		
 		for (int j = 0; j < points.length; j++) {
 			double transX = (points[j].x - min.x) * convert;
-			double transY = height - (points[j].y - min.y)  * convert; 
+			double transY = height - (points[j].y - min.y)  * convert * 1.5; 
 			pointsTransformed[j] = new Point2D.Double(transX, transY);
 		}
 
