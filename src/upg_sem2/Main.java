@@ -50,15 +50,14 @@ public class Main {
 	public static void main(String [] arg){
 		GetJsonFile json = new GetJsonFile();
 		Main mn = new Main();
-		
+
 		Wrap wraper = json.importJson();
+		mn.inputCheck(arg, wraper);		
 		
-		mn.inputCheck(arg, wraper);
-		
-		
-		System.out.println(wraper.getYears()[12].getYear());
+//		System.out.println(wraper.getYears()[12].getYear());
 		
 		Canvas canvas = new Canvas(wraper, arg);
+		canvas.run();
 	}
 }
 	

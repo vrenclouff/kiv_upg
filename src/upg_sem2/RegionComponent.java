@@ -10,26 +10,17 @@ import java.util.Arrays;
 
 public class RegionComponent {
 	
-	Point2D.Double points[];
-	Path2D.Double regionPath;
-	Color color;
-	String regionName;
+	private Point2D.Double points[];
+	private Path2D.Double regionPath;
+	private Color color;
 	
-
 	public RegionComponent(String regionName, Color regionColor, Point2D.Double points[]){
 		this.points = Arrays.copyOf(points, points.length);
 		this.color = regionColor;
-		this.regionName = regionName;
 	}
 	
-	public void draw(Graphics2D g2, int windowWidth, int windowHeight, int padding, Point2D.Double max, Point2D.Double min) {
-//		int regionWidth = windowWidth - 2*padding;
-//		int regionHeight = windowHeight - 2*padding;
-//		
-//		System.out.println(regionName);
-//	//	System.out.println("width: "+regionWidth+"     height: "+regionHeight);
-//		
-//	//	regionWidth = 10;
+	public void draw(Graphics2D g2, Point2D.Double max, Point2D.Double min) {
+		int padding = 300;
 		int regionHeight = 60;
 		int regionWidth = 60;
  		

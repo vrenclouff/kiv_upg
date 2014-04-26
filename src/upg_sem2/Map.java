@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -16,35 +17,52 @@ public class Map extends JPanel {
 	
 	
 	private static final long serialVersionUID = 1L;
-	RegionComponent [] regioComponent;
+	private RegionComponent [] regioComponent;
 	private Point2D.Double max;
 	private Point2D.Double min;
-	int width = 700;
-	int height = 600;
-	Wrap data;
-	int year;
-	int index;
+	private Wrap data;
+	private int year;
+	private int index;
+	private final int width = 700;
+	private final int height = 600;
 	
-	public Map(Wrap data, int indexYear){
+	public Map(Wrap data){
 		this.regioComponent = this.readRegions();
 		this.calculateLimits();
 		this.data = data;
-		this.year = data.getYears()[indexYear].getYear();
-		this.index = indexYear;
 		
 		this.setSize(width, height);
 		this.setPreferredSize(this.getSize());
 	}
+	
+	public int getIndex() {
+		return index;
+	}
+	public void setIndex(int index) {
+		this.index = index;
+	}
+
+
+	private BufferedImage drawYearScreen() {
+		BufferedImage img = new BufferedImage( width, height, BufferedImage.TYPE_3BYTE_BGR );
+		Graphics2D g = (Graphics2D) img.getGraphics();
+		Graphics2D g2 = (Graphics2D) g;
+		
+		for(int i = 0; i < regioComponent.length; i++){
+			regioComponent[i].draw(g2, max, min);
+		}
+		g2.setColor(Color.white);
+		g2.drawString(String.valueOf(data.getYears()[getIndex()].getYear()), 10, 10);
+		
+		return img;	
+	}
+	
 
 	public void paint(Graphics g) {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 		
-		for(int i = 0; i < regioComponent.length; i++){
-			regioComponent[i].draw(g2, getSize().width, getSize().height, 300, max, min);
-		}
-//		System.out.println(year);
-		g2.drawString(String.valueOf(year), 10, 10);
+		g2.drawImage(drawYearScreen(), 0, 0, null);
 	}	
 
 	private void calculateLimits() {
@@ -80,7 +98,7 @@ public class Map extends JPanel {
 		}
 		catch (Exception e) {
 			Component parentComponent = null;
-			JOptionPane.showConfirmDialog(parentComponent, "File with regions not found \n Program will be closed", "ERROR", JOptionPane.CLOSED_OPTION, JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showConfirmDialog(parentComponent, "File with regions not found \nProgram will be closed", "ERROR", JOptionPane.CLOSED_OPTION, JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
 		try {

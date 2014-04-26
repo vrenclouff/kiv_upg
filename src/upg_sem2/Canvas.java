@@ -11,49 +11,42 @@ import javax.swing.JPanel;
 public class Canvas extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
-	final int width = 700;
-	final int height = 600;
-	static Wrap data;
-	final String[] arg;
-	static JFrame frame;
-	static int index;
+	private final int width = 700;
+	private final int height = 600;
+	private static Wrap data;
+	private static JFrame frame;
+	private static int index;
+	private static Map drawiMap;
 	
 	
-
 	public Canvas(Wrap data, String[] arg){
-		this.data = data;
-		this.arg = arg;
+		Canvas.setData(data);
 		this.indexYear(arg[2]);
-		
-		this.frame = new JFrame();		
-		this.frame.setSize(width, height+55);
-		this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
-		this.frame.setLayout(new BorderLayout());
-		this.initButtons();
-		this.run(new Map(data, getIndex()));
 	}
 	
-	
 	private void indexYear(String year){
-		for(int i = 0; i < data.getYears().length; i++){
-			if(data.getYears()[i].getYear() == Integer.parseInt(year)){
+		for(int i = 0; i < getData().getYears().length; i++){
+			if(getData().getYears()[i].getYear() == Integer.parseInt(year)){
 				index = i;
 				break;
 			}
 		}
 	}
-	
+	public static Wrap getData() {
+		return data;
+	}
+	public static void setData(Wrap data) {
+		Canvas.data = data;
+	}
 	public static int getIndex() {
 		return index;
 	}
-	
-
 	public static void setIndex(int tmp){
 		index = tmp;
 	}
 	public static void setUpIndex() {
 		int tmp = getIndex()+1;
-		if(tmp >= data.getYears().length){ tmp = data.getYears().length-1;}
+		if(tmp >= getData().getYears().length){ tmp = getData().getYears().length-1;}
 		index = tmp;
 	}
 	public static void setDownIndex(){
@@ -61,8 +54,6 @@ public class Canvas extends JFrame {
 		if(tmp < 0){ tmp = 0;}
 		index = tmp;
 	}
-
-
 
 	private static void initButtons() {
 		
@@ -74,7 +65,9 @@ public class Canvas extends JFrame {
 			
 			public void actionPerformed(ActionEvent e) {
 				setIndex(0);
-				System.out.println(data.getYears()[getIndex()].getYear());
+				drawiMap.setIndex(getIndex());
+				drawiMap.repaint();
+		//		System.out.println(data.getYears()[getIndex()].getYear());
 			}
 		});
 		buttonPanel.add(leftEnd);
@@ -86,7 +79,9 @@ public class Canvas extends JFrame {
 
 			public void actionPerformed(ActionEvent e) {
 				setDownIndex();
-				System.out.println(data.getYears()[getIndex()].getYear());
+				drawiMap.setIndex(getIndex());
+				drawiMap.repaint();
+		//		System.out.println(data.getYears()[getIndex()].getYear());
 			}
 		});				
 		buttonPanel.add(left);
@@ -108,8 +103,10 @@ public class Canvas extends JFrame {
 
 			public void actionPerformed(ActionEvent e) {
 				setUpIndex();
-			//	run(new Map(data, getIndex()));
-				System.out.println(data.getYears()[getIndex()].getYear());
+				drawiMap.setIndex(getIndex());
+				drawiMap.repaint();
+				
+		//		System.out.println(data.getYears()[getIndex()].getYear());
 			}
 		});				
 		buttonPanel.add(right);
@@ -119,9 +116,11 @@ public class Canvas extends JFrame {
 		rightEnd.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				setIndex(data.getYears().length-1);
-				System.out.println(data.getYears()[getIndex()].getYear());
+				setIndex(getData().getYears().length-1);
+				drawiMap.setIndex(getIndex());
+				drawiMap.repaint();
 				
+		//		System.out.println(data.getYears()[getIndex()].getYear());	
 			}
 		});				
 		buttonPanel.add(rightEnd);
@@ -149,12 +148,19 @@ public class Canvas extends JFrame {
 		frame.add(buttonPanel, BorderLayout.SOUTH);	
 	}
 	
-
-	public static void run(Map drawiMap){	
+	public void run(){	
+		drawiMap = new Map(getData());
+		drawiMap.setIndex(getIndex());
+		frame = new JFrame();		
+		frame.setSize(width, height+55);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
+		frame.setLayout(new BorderLayout());
+		
+		initButtons();
+	
 		frame.add(drawiMap, BorderLayout.CENTER);
-						
+		
 		frame.setLocationRelativeTo(null);	
 		frame.setVisible(true);
-		
 	}
 }
