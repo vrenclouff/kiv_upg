@@ -69,6 +69,13 @@ public class RegionComponent {
 		g2.draw(regionPath);
 	}
 	
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
 	
 	public Point2D.Double[] getPoints() {
 		return points;

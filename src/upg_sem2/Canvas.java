@@ -22,6 +22,7 @@ public class Canvas extends JFrame {
 	public Canvas(Wrap data, String[] arg){
 		Canvas.setData(data);
 		this.indexYear(arg[2]);
+		Canvas.setDrawiMap(new Map(getData(), arg));
 	}
 	
 	private void indexYear(String year){
@@ -65,8 +66,8 @@ public class Canvas extends JFrame {
 			
 			public void actionPerformed(ActionEvent e) {
 				setIndex(0);
-				drawiMap.setIndex(getIndex());
-				drawiMap.repaint();
+				getDrawiMap().setIndex(getIndex());
+				getDrawiMap().repaint();
 		//		System.out.println(data.getYears()[getIndex()].getYear());
 			}
 		});
@@ -79,8 +80,8 @@ public class Canvas extends JFrame {
 
 			public void actionPerformed(ActionEvent e) {
 				setDownIndex();
-				drawiMap.setIndex(getIndex());
-				drawiMap.repaint();
+				getDrawiMap().setIndex(getIndex());
+				getDrawiMap().repaint();
 		//		System.out.println(data.getYears()[getIndex()].getYear());
 			}
 		});				
@@ -103,8 +104,8 @@ public class Canvas extends JFrame {
 
 			public void actionPerformed(ActionEvent e) {
 				setUpIndex();
-				drawiMap.setIndex(getIndex());
-				drawiMap.repaint();
+				getDrawiMap().setIndex(getIndex());
+				getDrawiMap().repaint();
 				
 		//		System.out.println(data.getYears()[getIndex()].getYear());
 			}
@@ -117,8 +118,8 @@ public class Canvas extends JFrame {
 
 			public void actionPerformed(ActionEvent e) {
 				setIndex(getData().getYears().length-1);
-				drawiMap.setIndex(getIndex());
-				drawiMap.repaint();
+				getDrawiMap().setIndex(getIndex());
+				getDrawiMap().repaint();
 				
 		//		System.out.println(data.getYears()[getIndex()].getYear());	
 			}
@@ -149,8 +150,7 @@ public class Canvas extends JFrame {
 	}
 	
 	public void run(){	
-		drawiMap = new Map(getData());
-		drawiMap.setIndex(getIndex());
+		getDrawiMap().setIndex(getIndex());
 		frame = new JFrame();		
 		frame.setSize(width, height+55);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
@@ -158,9 +158,17 @@ public class Canvas extends JFrame {
 		
 		initButtons();
 	
-		frame.add(drawiMap, BorderLayout.CENTER);
+		frame.add(getDrawiMap(), BorderLayout.CENTER);
 		
 		frame.setLocationRelativeTo(null);	
 		frame.setVisible(true);
+	}
+
+	public static Map getDrawiMap() {
+		return drawiMap;
+	}
+
+	public static void setDrawiMap(Map drawiMap) {
+		Canvas.drawiMap = drawiMap;
 	}
 }
