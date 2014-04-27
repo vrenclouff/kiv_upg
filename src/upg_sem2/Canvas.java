@@ -3,6 +3,9 @@ package upg_sem2;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,6 +20,8 @@ public class Canvas extends JFrame {
 	private static JFrame frame;
 	private static int index;
 	private static Map drawiMap;
+	public static Time time;
+	public static boolean timerButton;
 	
 	
 	public Canvas(Wrap data, String[] arg){
@@ -55,6 +60,11 @@ public class Canvas extends JFrame {
 		if(tmp < 0){ tmp = 0;}
 		index = tmp;
 	}
+	public static void runIndex(){
+		int tmp = getIndex()+1;
+		if(tmp >= getData().getYears().length){ tmp = 0;}
+		index = tmp;
+	}
 
 	private static void initButtons() {
 		
@@ -68,7 +78,6 @@ public class Canvas extends JFrame {
 				setIndex(0);
 				getDrawiMap().setIndex(getIndex());
 				getDrawiMap().repaint();
-		//		System.out.println(data.getYears()[getIndex()].getYear());
 			}
 		});
 		buttonPanel.add(leftEnd);
@@ -82,18 +91,21 @@ public class Canvas extends JFrame {
 				setDownIndex();
 				getDrawiMap().setIndex(getIndex());
 				getDrawiMap().repaint();
-		//		System.out.println(data.getYears()[getIndex()].getYear());
 			}
 		});				
 		buttonPanel.add(left);
 		
 		JButton runPause = new JButton();
 		runPause.setText("Run/Pause");
+		time = new Time();
 		runPause.addActionListener(new ActionListener() {
 
-			public void actionPerformed(ActionEvent e) {
-				
-				
+			public void actionPerformed(ActionEvent e) {	
+				if(!time.isRunning()){
+					time.start();
+				}else{
+					time.stop();
+				}
 			}
 		});				
 		buttonPanel.add(runPause);
@@ -106,8 +118,6 @@ public class Canvas extends JFrame {
 				setUpIndex();
 				getDrawiMap().setIndex(getIndex());
 				getDrawiMap().repaint();
-				
-		//		System.out.println(data.getYears()[getIndex()].getYear());
 			}
 		});				
 		buttonPanel.add(right);
@@ -120,8 +130,6 @@ public class Canvas extends JFrame {
 				setIndex(getData().getYears().length-1);
 				getDrawiMap().setIndex(getIndex());
 				getDrawiMap().repaint();
-				
-		//		System.out.println(data.getYears()[getIndex()].getYear());	
 			}
 		});				
 		buttonPanel.add(rightEnd);
@@ -136,16 +144,7 @@ public class Canvas extends JFrame {
 			}
 		});				
 		buttonPanel.add(export);
-		
-//		JButton closeButton = new JButton("Close");
-//		closeButton.addActionListener(new ActionListener() {
-//			
-//			public void actionPerformed(ActionEvent e) {
-//				frame.dispose();
-//			}
-//		});
-//		buttonPanel.add(closeButton);
-		
+			
 		frame.add(buttonPanel, BorderLayout.SOUTH);	
 	}
 	
@@ -172,3 +171,43 @@ public class Canvas extends JFrame {
 		Canvas.drawiMap = drawiMap;
 	}
 }
+
+
+
+	class MyTask extends TimerTask {
+	
+		
+		public MyTask() {}
+	  
+		public void run() {
+			Canvas.runIndex();
+			Canvas.getDrawiMap().setIndex(Canvas.getIndex());
+			Canvas.getDrawiMap().repaint();
+		}
+	}
+
+	class Time {
+		  private boolean running;
+		  private MyTask task;
+		  private Timer timer;
+		  public Time() {
+		    timer = new Timer(true);
+		  }
+		  
+		  public boolean isRunning(){
+			  return running;
+		  }
+	
+		  public void start() {
+		    running = true;
+		    task = new MyTask();
+		    timer.scheduleAtFixedRate(task, 0, 1250);
+		  }
+	
+		  public void stop() {
+		    running = false;
+		    task.cancel();
+		  }
+	}
+
+
