@@ -31,6 +31,7 @@ public class Map extends JPanel {
 	private final int height = 500;
 	private double maxValue;
 	private double minValue;
+	private final boolean isA;
 	
 	public Map(Wrap data, String [] arg){
 		this.regioComponent = this.readRegions();
@@ -39,10 +40,22 @@ public class Map extends JPanel {
 		this.imageYears = new ArrayList<>();
 		this.arg = arg;
 		this.diseaseIndex = getDiseaseIndex(arg[0]);
+		this.isA = isA();
 		
 		this.loadImages();
 		this.setSize(width, height);
 		this.setPreferredSize(this.getSize());
+	}
+	
+	private boolean isA(){
+		char c = arg[1].charAt(0);
+		boolean value = false;
+		if(c == 'A'){
+			value = true;
+		}else if(c == 'R'){
+			value = false;
+		}
+		return value;
 	}
 	
 	private int getDiseaseIndex(String tmp){
@@ -73,19 +86,28 @@ public class Map extends JPanel {
 	private BufferedImage drawYearScreen() {
 		BufferedImage img = new BufferedImage( width, height, BufferedImage.TYPE_4BYTE_ABGR );
 		int [] regions = {11, 10, 12, 9, 7, 8, 6, 2, 4, 3, 1, 5, 0, 13};
-		
+		int [] regCtr = {490, 290, 440, 350, 530, 350, 340, 310, 360, 180, 390, 250, 275, 130, 220, 350, 70, 210, 110, 270, 230, 265, 170, 160, 230, 225, 550, 260};
+		String t = "";
+		int tmp = 0;
 		Graphics2D g = (Graphics2D) img.getGraphics();
 		Graphics2D g2 = (Graphics2D) g;
-		
+		g2.setColor(Color.black);
 		ratio();
+		drawLegend(g2);
 		
 		for(int i = 0; i < regioComponent.length; i++){
 			regioComponent[i].setColor(setColor(regions[i]));
+			if(isA){
+				t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getA()[diseaseIndex].replace(",",".") )));
+				regioComponent[i].setValue(t);
+			}else{
+				t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getB()[diseaseIndex].replace(",",".") )));
+				regioComponent[i].setValue(t);
+			}
 			regioComponent[i].draw(g2, max, min);
+			g2.drawString(t, regCtr[tmp++], regCtr[tmp++]);
 		}
-		drawLegend(g2);
-		
-		g2.setColor(Color.black);
+				
 		Font font = new Font("Arial", Font.BOLD, 14);
 		g2.setFont(font);
 		g2.setStroke(new BasicStroke(2));
@@ -103,15 +125,15 @@ public class Map extends JPanel {
 		g2.setColor(Color.black);
 		g2.drawString(str, width-130, 60);
 		
-		str = String.valueOf(String.valueOf(Math.round(minValue+(3.0/4.0*(maxValue-minValue))) +" - "+String.valueOf(Math.round(minValue+(2.0/4.0*(maxValue-minValue))))));
+		str = String.valueOf(String.valueOf(Math.round(minValue+(3.0/4.0*(maxValue-minValue))-1) +" - "+String.valueOf(Math.round(minValue+(2.0/4.0*(maxValue-minValue))))));
 		g2.setColor(Color.black);
 		g2.drawString(str, width-130, 76);
 		
-		str = String.valueOf(String.valueOf(Math.round(minValue+(2.0/4.0*(maxValue-minValue))) +" - "+String.valueOf(Math.round(minValue+(1.0/4.0*(maxValue-minValue))))));
+		str = String.valueOf(String.valueOf(Math.round(minValue+(2.0/4.0*(maxValue-minValue))-1) +" - "+String.valueOf(Math.round(minValue+(1.0/4.0*(maxValue-minValue))))));
 		g2.setColor(Color.black);
 		g2.drawString(str, width-130, 90);
 		
-		str = String.valueOf(String.valueOf(Math.round(minValue+(1.0/4.0*(maxValue-minValue))) +" - "+String.valueOf(Math.round(minValue))));
+		str = String.valueOf(String.valueOf(Math.round(minValue+(1.0/4.0*(maxValue-minValue))-1) +" - "+String.valueOf(Math.round(minValue))));
 		g2.setColor(Color.black);
 		g2.drawString(str, width-130, 105);
 		
@@ -170,26 +192,24 @@ public class Map extends JPanel {
 	private Color setColor(int i){
 		double tmp = 0;
 		String number = "";
-		char c;
 		double ratio = maxValue - minValue;
 		int ind = 0;
 		
-		c = arg[1].charAt(0);
-		if(c == 'A'){
+		if(isA){
 			number = data.getYears()[getIndex()].getRegions()[i].getA()[diseaseIndex];
-		}if(c == 'R'){
+		}else{
 			number = data.getYears()[getIndex()].getRegions()[i].getB()[diseaseIndex];
 		}
 		tmp = Double.parseDouble( number.replace(",",".") );
 		
 		if(tmp >= minValue && tmp <= ((1.0/4.0*ratio)+minValue)){
-			ind = 0;
-		}else if(tmp <= ((2.0/4.0*ratio)+minValue) && tmp >= ((1.0/4.0*ratio)+minValue)){
-			ind = 1;
-		}else if(tmp >= ((2.0/4.0*ratio)+minValue) && tmp <= ((3.0/4.0*ratio)+minValue)){
-			ind = 2;
-		}else if(tmp <= maxValue && tmp >= ((3.0/4.0*ratio)+minValue)){
 			ind = 3;
+		}else if(tmp < ((2.0/4.0*ratio)+minValue) && tmp >= ((1.0/4.0*ratio)+minValue)){
+			ind = 2;
+		}else if(tmp >= ((2.0/4.0*ratio)+minValue) && tmp < ((3.0/4.0*ratio)+minValue)){
+			ind = 1;
+		}else if(tmp <= maxValue && tmp >= ((3.0/4.0*ratio)+minValue)){
+			ind = 0;
 		}
 
 		return getColor(ind);
@@ -199,15 +219,13 @@ public class Map extends JPanel {
 		maxValue = Double.MIN_VALUE;
 		minValue = Double.MAX_VALUE;
 		double tmp = 0.0;
-		char c;
 		String number = "";
 				
 		
 		for(int i = 0; i < data.getYears()[getIndex()].getRegions().length; i++){
-			c = arg[1].charAt(0);
-			if(c == 'A'){
+			if(isA){
 				number = data.getYears()[getIndex()].getRegions()[i].getA()[diseaseIndex];
-			}if(c == 'R'){
+			}else{
 				number = data.getYears()[getIndex()].getRegions()[i].getB()[diseaseIndex];
 			}
 			if(number.equals("x")){ continue; }
@@ -228,8 +246,6 @@ public class Map extends JPanel {
 		
 		for(int j = 0; j < regioComponent.length; j++){
 			for(int i = 0; i < regioComponent[j].getPoints().length; i++){
-				if(regioComponent[j].getPoints()[i].x < min.x) min.x = regioComponent[j].getPoints()[i].x;
-				if(regioComponent[j].getPoints()[i].y < min.y) min.y = regioComponent[j].getPoints()[i].y;
 				if(regioComponent[j].getPoints()[i].x > max.x) min.x = regioComponent[j].getPoints()[i].x;
 				if(regioComponent[j].getPoints()[i].y > max.y) min.y = regioComponent[j].getPoints()[i].y;
 			}

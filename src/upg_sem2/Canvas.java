@@ -170,7 +170,7 @@ public class Canvas extends JFrame {
 		initButtons();
 	
 		frame.add(getDrawiMap(), BorderLayout.CENTER);
-		
+		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);	
 		frame.setVisible(true);
 	}
