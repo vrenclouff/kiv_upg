@@ -1,7 +1,9 @@
 package upg_sem2;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
@@ -81,16 +83,22 @@ public class Map extends JPanel {
 			regioComponent[i].setColor(setColor(regions[i]));
 			regioComponent[i].draw(g2, max, min);
 		}
-		g2.setColor(Color.black);
-		g2.drawString(String.valueOf(data.getYears()[getIndex()].getYear()), 10, 30);
 		drawLegend(g2);
+		
+		g2.setColor(Color.black);
+		Font font = new Font("Arial", Font.BOLD, 14);
+		g2.setFont(font);
+		g2.setStroke(new BasicStroke(2));
+		
+		g2.drawString(String.valueOf(data.getYears()[getIndex()].getYear()), 30, 60);
+		
 		
 		return img;	
 	}
 	
 	private void drawLegend(Graphics2D g2){
 		String str;
-		
+				
 		str = String.valueOf(Math.round(maxValue)) +" - "+String.valueOf(Math.round(minValue+(3.0/4.0*(maxValue-minValue))));
 		g2.setColor(Color.black);
 		g2.drawString(str, width-130, 60);
@@ -124,7 +132,35 @@ public class Map extends JPanel {
 		Graphics2D g2 = (Graphics2D) g;
 		
 		g2.drawImage(imageYears.get(getIndex()), 0, 0, null);
+		minimizeImg(g2);
+
 	}	
+	
+	private void minimizeImg(Graphics2D g2){
+		int widthImg = width/6;
+		int ratio = width/height;
+		int heightImg = widthImg*ratio;
+		int x = 0;
+		int y = 500;
+		int tmp = 0;
+		int position = 0;
+		
+		for(int i = 0; i < data.getYears().length; i++){
+			if(getIndex() == tmp){ 
+				tmp++;
+				continue; }
+			if(position == 6){
+				y += heightImg;
+				x = 0;
+			}
+			g2.drawString(String.valueOf(data.getYears()[tmp].getYear()), x, y);
+			g2.drawImage(imageYears.get(tmp), x, y, widthImg, heightImg, null);
+			x = x + widthImg;
+			position++;
+			tmp++;
+			
+		}
+	}
 	
 	private Color getColor(int i){
 		Color[] color = {new Color(68, 151,101), new Color(74, 201, 124), new Color(79, 250, 148), new Color(175, 246, 203)};

@@ -15,18 +15,21 @@ public class Canvas extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	private final int width = 680;
-	private final int height = 600;
+	private final int height = 730;
+	private String[] arg;
 	private static Wrap data;
 	private static JFrame frame;
 	private static int index;
 	private static Map drawiMap;
 	public static Time time;
-	public static boolean timerButton;
+	
+	
 	
 	
 	public Canvas(Wrap data, String[] arg){
 		Canvas.setData(data);
 		this.indexYear(arg[2]);
+		this.arg = arg;
 		Canvas.setDrawiMap(new Map(getData(), arg));
 	}
 	
@@ -159,6 +162,7 @@ public class Canvas extends JFrame {
 	public void run(){	
 		getDrawiMap().setIndex(getIndex());
 		frame = new JFrame();		
+		frame.setTitle("Type of disease: "+arg[0]);
 		frame.setSize(width, height+55);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 		frame.setLayout(new BorderLayout());
