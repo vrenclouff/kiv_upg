@@ -11,8 +11,6 @@ public class Main {
 		String [] hospitalizations = {"A", "A+", "R", "R+"};
 		
 		Component parentComponent = null;
-	//	System.out.println(arg.length);
-	//	System.out.println(Arrays.toString(arg));
 		
 		if(arg.length == 0 || arg.length > 4 || arg.length < 4 ){
 			JOptionPane.showConfirmDialog(parentComponent, "Parameters not load \nProgram will be closed", "ERROR", JOptionPane.CLOSED_OPTION, JOptionPane.ERROR_MESSAGE);
@@ -53,9 +51,7 @@ public class Main {
 
 		Wrap wraper = json.importJson();
 		mn.inputCheck(arg, wraper);		
-		
-//		System.out.println(wraper.getYears()[12].getYear());
-		
+				
 		Canvas canvas = new Canvas(wraper, arg);
 		canvas.run();
 	}

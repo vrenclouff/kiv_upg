@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 public class Canvas extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
-	private final int width = 700;
+	private final int width = 680;
 	private final int height = 600;
 	private static Wrap data;
 	private static JFrame frame;
@@ -65,7 +65,14 @@ public class Canvas extends JFrame {
 		if(tmp >= getData().getYears().length){ tmp = 0;}
 		index = tmp;
 	}
-
+	public static boolean upIndex(){
+		boolean tmp = false;
+		if(getIndex() >= getData().getYears().length){
+			tmp = true;
+		}
+		return tmp;
+	}
+	
 	private static void initButtons() {
 		
 		JPanel buttonPanel = new JPanel();
@@ -101,6 +108,7 @@ public class Canvas extends JFrame {
 		runPause.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {	
+				
 				if(!time.isRunning()){
 					time.start();
 				}else{
@@ -175,10 +183,7 @@ public class Canvas extends JFrame {
 
 
 	class MyTask extends TimerTask {
-	
-		
 		public MyTask() {}
-	  
 		public void run() {
 			Canvas.runIndex();
 			Canvas.getDrawiMap().setIndex(Canvas.getIndex());
@@ -191,19 +196,17 @@ public class Canvas extends JFrame {
 		  private MyTask task;
 		  private Timer timer;
 		  public Time() {
-		    timer = new Timer(true);
+		    this.timer = new Timer(true);
 		  }
 		  
 		  public boolean isRunning(){
 			  return running;
 		  }
-	
 		  public void start() {
 		    running = true;
 		    task = new MyTask();
 		    timer.scheduleAtFixedRate(task, 0, 1250);
 		  }
-	
 		  public void stop() {
 		    running = false;
 		    task.cancel();
