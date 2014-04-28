@@ -222,7 +222,7 @@ public class Map extends JPanel {
 		String number = "";
 				
 		
-		for(int i = 0; i < data.getYears()[getIndex()].getRegions().length; i++){
+		for(int i = 0; i < data.getYears()[getIndex()].getRegions().length-4; i++){
 			if(isA){
 				number = data.getYears()[getIndex()].getRegions()[i].getA()[diseaseIndex];
 			}else{
