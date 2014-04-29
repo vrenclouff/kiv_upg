@@ -77,10 +77,35 @@ public class Map extends JPanel {
 	}
 	
 	private void loadImages(){
-		for(int i = 0; i < data.getYears().length; i++){
+		int tmp = data.getYears().length;
+		for(int i = 0; i < tmp; i++){
 			setIndex(i);
 			imageYears.add(i, drawYearScreen());
 		}
+		imageYears.add(tmp, drawVisual());
+		
+	}
+	
+	private BufferedImage drawVisual(){
+		BufferedImage img = new BufferedImage( width, height, BufferedImage.TYPE_4BYTE_ABGR );
+		Graphics2D g = (Graphics2D) img.getGraphics();
+		Graphics2D g2 = (Graphics2D) g;
+		int tmp = 0;
+		int [] regCtr = {490, 290, 440, 350, 530, 350, 340, 310, 360, 180, 390, 250, 275, 130, 220, 350, 70, 210, 110, 270, 230, 265, 170, 160, 500, 100, 550, 260};
+		for(int i = 0; i < regioComponent.length; i++){
+			regioComponent[i].setColor(Color.white);
+			regioComponent[i].draw(g2, max, min);
+			
+			g2.drawString("graf", regCtr[tmp++], regCtr[tmp++]);
+		}
+		
+		Font font = new Font("Arial", Font.BOLD, 14);
+		g2.setFont(font);
+		g2.setStroke(new BasicStroke(2));
+		
+		g2.drawString("Vizualizace", 30, 60);
+		
+		return img;
 	}
 	
 	private BufferedImage drawYearScreen() {
@@ -99,10 +124,8 @@ public class Map extends JPanel {
 			regioComponent[i].setColor(setColor(regions[i]));
 			if(isA){
 				t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getA()[diseaseIndex].replace(",",".") )));
-				regioComponent[i].setValue(t);
 			}else{
 				t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getB()[diseaseIndex].replace(",",".") )));
-				regioComponent[i].setValue(t);
 			}
 			regioComponent[i].draw(g2, max, min);
 			g2.drawString(t, regCtr[tmp++], regCtr[tmp++]);
@@ -154,7 +177,10 @@ public class Map extends JPanel {
 		Graphics2D g2 = (Graphics2D) g;
 		
 		g2.drawImage(imageYears.get(getIndex()), 0, 0, null);
-		minimizeImg(g2);
+		if(getIndex() != data.getYears().length){
+			minimizeImg(g2);
+			// nejaky text
+		}
 
 	}	
 	

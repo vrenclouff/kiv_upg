@@ -55,7 +55,7 @@ public class Canvas extends JFrame {
 	}
 	public static void setUpIndex() {
 		int tmp = getIndex()+1;
-		if(tmp >= getData().getYears().length){ tmp = getData().getYears().length-1;}
+		if(tmp >= getData().getYears().length){ tmp = getData().getYears().length;}
 		index = tmp;
 	}
 	public static void setDownIndex(){
@@ -63,14 +63,9 @@ public class Canvas extends JFrame {
 		if(tmp < 0){ tmp = 0;}
 		index = tmp;
 	}
-	public static void runIndex(){
-		int tmp = getIndex()+1;
-		if(tmp >= getData().getYears().length){ tmp = 0;}
-		index = tmp;
-	}
 	public static boolean upIndex(){
 		boolean tmp = false;
-		if(getIndex() >= getData().getYears().length){
+		if(getIndex() >= getData().getYears().length){			
 			tmp = true;
 		}
 		return tmp;
@@ -138,7 +133,7 @@ public class Canvas extends JFrame {
 		rightEnd.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				setIndex(getData().getYears().length-1);
+				setIndex(getData().getYears().length);
 				getDrawiMap().setIndex(getIndex());
 				getDrawiMap().repaint();
 			}
@@ -189,31 +184,67 @@ public class Canvas extends JFrame {
 	class MyTask extends TimerTask {
 		public MyTask() {}
 		public void run() {
-			Canvas.runIndex();
+			if(Canvas.upIndex()){
+				if(Canvas.time.isRunning()){ Canvas.time.stop(); }
+				
+				if(!Canvas.time.isRunningWait()){ Canvas.time.startWait(); }
+			}		
 			Canvas.getDrawiMap().setIndex(Canvas.getIndex());
 			Canvas.getDrawiMap().repaint();
+			Canvas.setUpIndex();
+		}
+	}
+	
+	class MyTaskWait extends TimerTask {
+		int i = 0;
+		public MyTaskWait() {}
+		public void run() {
+			
+			Canvas.setIndex(0);
+			
+			if(i++ == 1){
+				if(Canvas.time.isRunningWait()){ Canvas.time.stopWait(); }
+				
+				if(!Canvas.time.isRunning()){ Canvas.time.start(); }
+			}
 		}
 	}
 
 	class Time {
 		  private boolean running;
+		  private boolean runningWait;
 		  private MyTask task;
+		  private MyTaskWait taskWait;
 		  private Timer timer;
+		  private Timer timerWait;
 		  public Time() {
 		    this.timer = new Timer(true);
+		    this.timerWait = new Timer(true);
 		  }
 		  
 		  public boolean isRunning(){
 			  return running;
+		  }
+		  public boolean isRunningWait(){
+				  return runningWait;
 		  }
 		  public void start() {
 		    running = true;
 		    task = new MyTask();
 		    timer.scheduleAtFixedRate(task, 0, 1250);
 		  }
+		  public void startWait() {
+			runningWait = true;
+			taskWait = new MyTaskWait();
+			timerWait.scheduleAtFixedRate(taskWait, 0, 5000);
+		  }
 		  public void stop() {
 		    running = false;
 		    task.cancel();
+		  }
+		  public void stopWait() {
+			runningWait = false;
+			taskWait.cancel();
 		  }
 	}
 

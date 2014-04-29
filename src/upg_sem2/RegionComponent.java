@@ -14,9 +14,6 @@ public class RegionComponent {
 	private Point2D.Double points[];
 	private Path2D.Double regionPath;
 	private Color color;
-	private String value;
-	private int centerX;
-	private int centerY;
 	
 	public RegionComponent(String regionName, Color regionColor, Point2D.Double points[]){
 		this.points = Arrays.copyOf(points, points.length);
@@ -27,9 +24,7 @@ public class RegionComponent {
 		int padding = 300;
 		int regionHeight = 60;
 		int regionWidth = 60;
- 		
-	//	g2.drawString(getValue(), centerX, centerY);
-		
+ 				
 		this.createTransformedRegionPath(regionWidth, regionHeight, max, min);
 		
 		AffineTransform origTransform = g2.getTransform();
@@ -72,9 +67,6 @@ public class RegionComponent {
 			pointsTransformed[j] = new Point2D.Double(transX, transY);
 		}
 		
-		centerX = maxX - minX;
-		centerY = maxY - minY;
-		
 		this.regionPath = new Path2D.Double();
 		this.regionPath.moveTo(pointsTransformed[0].x, pointsTransformed[0].y);
 		for (int i = 1; i < points.length; i++) 
@@ -107,13 +99,5 @@ public class RegionComponent {
 
 	public void setPoints(Point2D.Double[] points) {
 		this.points = points;
-	}
-
-	public String getValue() {
-		return value;
-	}
-
-	public void setValue(String number) {		
-		this.value = number;
 	}
 }
