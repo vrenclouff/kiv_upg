@@ -3,7 +3,6 @@ package upg_sem2;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -15,13 +14,6 @@ import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 
 public class Map extends JPanel {
 	
@@ -40,8 +32,6 @@ public class Map extends JPanel {
 	private double maxValue;
 	private double minValue;
 	private final boolean isA;
-	private ChartPanel grafPanel;
-	private JFreeChart chart;
 	
 	public Map(Wrap data, String [] arg){
 		this.regioComponent = this.readRegions();
@@ -51,11 +41,6 @@ public class Map extends JPanel {
 		this.arg = arg;
 		this.diseaseIndex = getDiseaseIndex(arg[0]);
 		this.isA = isA();
-		
-//		this.grafPanel = new ChartPanel(chart);
-//		this.grafPanel.setPreferredSize(new Dimension(100, 100));
-//		this.grafPanel.setVisible(true);
-//		this.add(grafPanel);
 		
 		this.loadImages();
 		this.setSize(width, height);
@@ -101,45 +86,29 @@ public class Map extends JPanel {
 		
 	}
 	
-	private void drawGraf(){
-		XYSeries data = generateData();
-		XYSeriesCollection ds = new XYSeriesCollection();
-		ds.addSeries(data);
-		chart = ChartFactory.createXYLineChart("", "", "", ds, PlotOrientation.VERTICAL, false, false, false);
-	
-		this.grafPanel = new ChartPanel(chart);
-		this.grafPanel.setPreferredSize(new Dimension(100, 100));
-		this.grafPanel.setVisible(true);
-		this.add(grafPanel);
-	}
-	
-	private XYSeries generateData(){
-		XYSeries data = new XYSeries("Data 2");
-		for (int i = 0; i < 60; i++) {
-			data.add(i, 20*Math.sin(i/10.0));
-		}		
-		return data;
+	private void drawGraf(Graphics2D g2, int x, int y){
 		
+		g2.drawLine(x, y, x, y-30);
+		g2.drawLine(x, y, x+30, y);
 	}
 	
 	private BufferedImage drawVisual(){
+		int [] regCtr = {490, 290, 440, 350, 530, 350, 340, 310, 360, 180, 390, 250, 275, 130, 220, 350, 70, 210, 110, 270, 230, 265, 170, 160, 460, 100, 550, 260};
 		BufferedImage img = new BufferedImage( width, height, BufferedImage.TYPE_4BYTE_ABGR );
 		Graphics2D g = (Graphics2D) img.getGraphics();
 		Graphics2D g2 = (Graphics2D) g;
 		int tmp = 0;
-		int [] regCtr = {490, 290, 440, 350, 530, 350, 340, 310, 360, 180, 390, 250, 275, 130, 220, 350, 70, 210, 110, 270, 230, 265, 170, 160, 500, 100, 550, 260};
 		for(int i = 0; i < regioComponent.length; i++){
 			regioComponent[i].setColor(Color.white);
 			regioComponent[i].draw(g2, max, min);
 			
-			g2.drawString("graf", regCtr[tmp++], regCtr[tmp++]);
+			drawGraf(g2, regCtr[tmp++], regCtr[tmp++]);
 		}
 		
+		g2.drawString("Praha", 460, 115);
 		Font font = new Font("Arial", Font.BOLD, 14);
 		g2.setFont(font);
 		g2.setStroke(new BasicStroke(2));
-		
-		drawGraf();
 		
 		g2.drawString("Vizualizace", 30, 60);
 		
