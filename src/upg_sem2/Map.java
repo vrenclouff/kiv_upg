@@ -86,25 +86,86 @@ public class Map extends JPanel {
 		
 	}
 	
-	private void drawGraf(Graphics2D g2, int x, int y){
+	private void drawGraf(Graphics2D g2, int x, int y, int i){
 		
-		g2.drawLine(x, y, x, y-30);
-		g2.drawLine(x, y, x+30, y);
+		
+		int lengthYear = data.getYears().length-1;
+		int len = (int)(36.0/(double)lengthYear);
+		int x1 = x;
+		int x2 = x+len;
+		int tmpY;
+		int valueBack = 0;
+		
+		g2.drawLine(x-1, y, x-1, y-30);
+		g2.drawLine(x-1, y, x+40, y);
+		g2.setColor(Color.red);
+		g2.setStroke(new BasicStroke(2));
+		
+		
+		String number;
+		double tmp;
+		double max = Double.MIN_VALUE;
+		double min = Double.MAX_VALUE;
+		
+		for(int j = 0; j <= lengthYear; j++){
+			if(isA){
+				number = data.getYears()[j].getRegions()[i].getA()[diseaseIndex];
+			}else{
+				number = data.getYears()[j].getRegions()[i].getB()[diseaseIndex];
+			}
+			tmp = Double.parseDouble( number.replace(",",".") );
+			
+			if(tmp > max){
+				max = tmp;
+			}else if(tmp < min){
+				min = max;
+			}
+		}
+		
+		
+		
+		for(int k = 0; k <= lengthYear; k++){
+			if(isA){
+				number = data.getYears()[k].getRegions()[i].getA()[diseaseIndex];
+			}else{
+				number = data.getYears()[k].getRegions()[i].getB()[diseaseIndex];
+			}
+			tmp = Double.parseDouble( number.replace(",",".") );
+			
+			tmpY = (int)((2.0/3.0 * 30.0 * tmp)/max);
+			
+			
+			g2.drawLine(x1, y-tmpY, x2, y-tmpY);
+			g2.setColor(Color.blue);
+			g2.drawLine(x1, y-(int)(1.0/3.0 * 30), x2, y-(int)(1.0/3.0 * 30));
+			g2.drawLine(x1, y-(int)(2.0/3.0 * 30), x2, y-(int)(2.0/3.0 * 30));
+			g2.setColor(Color.red);
+			if(k != 0){
+				g2.drawLine(x1, y-valueBack, x2, y-tmpY);
+			}
+			
+			valueBack = tmpY;
+			x1 += len;
+			x2 += len;
+			
+		}
 	}
 	
 	private BufferedImage drawVisual(){
-		int [] regCtr = {490, 290, 440, 350, 530, 350, 340, 310, 360, 180, 390, 250, 275, 130, 220, 350, 70, 210, 110, 270, 230, 265, 170, 160, 460, 100, 550, 260};
+		int [] regCtr = {465, 280, 440, 350, 530, 350, 340, 310, 360, 180, 390, 250, 275, 140, 220, 350, 70, 210, 110, 290, 230, 270, 170, 170, 460, 100, 550, 260};
+		int [] regions = {11, 10, 12, 9, 7, 8, 6, 2, 4, 3, 1, 5, 0, 13};
 		BufferedImage img = new BufferedImage( width, height, BufferedImage.TYPE_4BYTE_ABGR );
 		Graphics2D g = (Graphics2D) img.getGraphics();
 		Graphics2D g2 = (Graphics2D) g;
 		int tmp = 0;
+		
 		for(int i = 0; i < regioComponent.length; i++){
 			regioComponent[i].setColor(Color.white);
 			regioComponent[i].draw(g2, max, min);
 			
-			drawGraf(g2, regCtr[tmp++], regCtr[tmp++]);
+			drawGraf(g2, regCtr[tmp++], regCtr[tmp++], regions[i]);
 		}
-		
+		g2.setColor(Color.black);
 		g2.drawString("Praha", 460, 115);
 		Font font = new Font("Arial", Font.BOLD, 14);
 		g2.setFont(font);
