@@ -141,6 +141,7 @@ public class Map extends JPanel {
 		double max = Double.MIN_VALUE;
 		double min = Double.MAX_VALUE;
 		
+		
 		for(int j = 0; j <= lengthYear; j++){
 			if(diseaseIndex != 21){
 				if(isA){
@@ -150,18 +151,16 @@ public class Map extends JPanel {
 				}
 				tmp = Double.parseDouble( number.replace(",",".") );
 			}else{
-				tmp = getCounteValue(i);
+				tmp = getCounteValue(i, j);
 			}
 			
 			if(tmp > max){
-				System.out.println(max+"   "+tmp);
 				max = tmp;
 			}else if(tmp < min){
 				min = max;
 			}
 		}
-		
-		
+				
 		for(int k = 0; k <= lengthYear; k++){
 			if(diseaseIndex != 21){
 				if(isA){
@@ -171,7 +170,7 @@ public class Map extends JPanel {
 				}
 				tmp = Double.parseDouble( number.replace(",",".") );
 			}else{
-				tmp = getCounteValue(i);
+				tmp = getCounteValue(i, k);
 			}
 			
 			tmpY = (int)((2.0/3.0 * 30.0 * tmp)/max);
@@ -233,7 +232,7 @@ public class Map extends JPanel {
 					t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getB()[diseaseIndex].replace(",",".") )));
 				}
 			}else{
-				t = String.valueOf(Math.round(getCounteValue(i)));
+				t = String.valueOf(Math.round(getCounteValue(i, getIndex())));
 			}
 			regioComponent[i].draw(g2, max, min);
 			g2.drawString(t, regCtr[tmp++], regCtr[tmp++]);
@@ -441,7 +440,7 @@ public class Map extends JPanel {
 			}
 			tmp = Double.parseDouble( number.replace(",",".") );
 		}else{
-			tmp = getCounteValue(i);
+			tmp = getCounteValue(i, getIndex());
 		}
 		
 		if(tmp >= minValue && tmp <= ((1.0/4.0*ratio)+minValue)){
@@ -478,16 +477,16 @@ public class Map extends JPanel {
 		return getColorPlus(ind);
 	}
 	
-	private double getCounteValue(int k){
+	private double getCounteValue(int k, int ind){
 		double tmp = 0.0;
 		String number = "";
 		double count = 0.0;
 		
-		for(int j = 0; j < data.getYears()[getIndex()].getRegions()[0].getA().length; j++){
+		for(int j = 0; j < data.getYears()[ind].getRegions()[0].getA().length; j++){
 			if(isA){
-				number = data.getYears()[getIndex()].getRegions()[k].getA()[j];
+				number = data.getYears()[ind].getRegions()[k].getA()[j];
 			}else{
-				number = data.getYears()[getIndex()].getRegions()[k].getB()[j];
+				number = data.getYears()[ind].getRegions()[k].getB()[j];
 			}
 			if(number.equals("x")){ continue; }
 			tmp = Double.parseDouble( number.replace(",",".") );
@@ -501,28 +500,36 @@ public class Map extends JPanel {
 		minValue = Double.MAX_VALUE;
 		double tmp = 0.0;
 		String number = "";
+		double count = 0.0;
 				
 		if(diseaseIndex != 21){
 			for(int i = 0; i < data.getYears()[getIndex()].getRegions().length-4; i++){
-				
-				if(diseaseIndex != 21){
-					if(isA){
+				if(isA){
 					number = data.getYears()[getIndex()].getRegions()[i].getA()[diseaseIndex];
-					}else{
-						number = data.getYears()[getIndex()].getRegions()[i].getB()[diseaseIndex];
-					}
-					if(number.equals("x")){ continue; }
-					tmp = Double.parseDouble( number.replace(",",".") );		
 				}else{
-					tmp = getCounteValue(i);
+					number = data.getYears()[getIndex()].getRegions()[i].getB()[diseaseIndex];
 				}
+				if(number.equals("x")){ continue; }
+				tmp = Double.parseDouble( number.replace(",",".") );
 				
 				if(tmp > maxValue){
 					maxValue = tmp;
 				}else if(tmp < minValue){
 					minValue = tmp;
 				}
-			}	
+			}
+		}else{
+			for(int k = 0; k < data.getYears()[getIndex()].getRegions().length-4; k++){
+				
+				count = getCounteValue(k, getIndex());
+				
+				if(count > maxValue){
+					maxValue = count;
+				}else if(count < minValue){
+					minValue = count;
+				}
+			}
+			
 		}
 	}
 	
