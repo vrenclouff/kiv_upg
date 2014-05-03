@@ -55,7 +55,7 @@ public class Canvas extends JFrame {
 	}
 	public static void setUpIndex() {
 		int tmp = getIndex()+1;
-		if(tmp >= getData().getYears().length){ tmp = getData().getYears().length;}
+		if(tmp >= drawiMap.getCounter()){ tmp = drawiMap.getCounter();}
 		index = tmp;
 	}
 	public static void setDownIndex(){
@@ -65,7 +65,7 @@ public class Canvas extends JFrame {
 	}
 	public static boolean upIndex(){
 		boolean tmp = false;
-		if(getIndex() >= getData().getYears().length){			
+		if(getIndex() >= drawiMap.getCounter()){			
 			tmp = true;
 		}
 		return tmp;
@@ -133,7 +133,7 @@ public class Canvas extends JFrame {
 		rightEnd.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent e) {
-				setIndex(getData().getYears().length);
+				setIndex(drawiMap.getCounter());
 				getDrawiMap().setIndex(getIndex());
 				getDrawiMap().repaint();
 			}

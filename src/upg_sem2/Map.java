@@ -9,6 +9,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -31,7 +32,12 @@ public class Map extends JPanel {
 	private final int height = 500;
 	private double maxValue;
 	private double minValue;
+	private double maxValuePlus;
+	private double minValuePlus;
 	private final boolean isA;
+	private final boolean isPlus;
+	private int counter;
+	private ArrayList<Double> regressValue;
 	
 	public Map(Wrap data, String [] arg){
 		this.regioComponent = this.readRegions();
@@ -41,6 +47,10 @@ public class Map extends JPanel {
 		this.arg = arg;
 		this.diseaseIndex = getDiseaseIndex(arg[0]);
 		this.isA = isA();
+		this.isPlus = isPlus();
+		this.counter = -1;
+		this.regressValue = new ArrayList<Double>();
+		
 		
 		this.loadImages();
 		this.setSize(width, height);
@@ -55,6 +65,15 @@ public class Map extends JPanel {
 		}else if(c == 'R'){
 			value = false;
 		}
+		return value;
+	}
+	private boolean isPlus(){
+		boolean value = false;
+		
+		if(arg[1].length() == 2){
+			value = true;
+		}
+		
 		return value;
 	}
 	
@@ -75,14 +94,30 @@ public class Map extends JPanel {
 	public void setIndex(int index) {
 		this.index = index;
 	}
+	public boolean getIsPlus(){
+		return isPlus;
+	}
+	public int getCounter(){
+		return counter;
+	}
 	
 	private void loadImages(){
 		int tmp = data.getYears().length;
-		for(int i = 0; i < tmp; i++){
-			setIndex(i);
-			imageYears.add(i, drawYearScreen());
+		if(!isPlus){
+			for(int i = 0; i < tmp; i++){
+				setIndex(i);
+				imageYears.add(i, drawYearScreen());
+				counter++;
+			}
+			imageYears.add(tmp, drawVisual());
+			counter++;
+		}else{
+			for(int i = 0; i < tmp; i++){
+				setIndex(i);
+				imageYears.add(i, drawYearScreenPlus());
+				counter++;
+			}
 		}
-		imageYears.add(tmp, drawVisual());
 		
 	}
 	
@@ -135,18 +170,19 @@ public class Map extends JPanel {
 			tmpY = (int)((2.0/3.0 * 30.0 * tmp)/max);
 			
 			
-			g2.drawLine(x1, y-tmpY, x2, y-tmpY);
-			g2.setColor(Color.blue);
-			g2.drawLine(x1, y-(int)(1.0/3.0 * 30), x2, y-(int)(1.0/3.0 * 30));
-			g2.drawLine(x1, y-(int)(2.0/3.0 * 30), x2, y-(int)(2.0/3.0 * 30));
-			g2.setColor(Color.red);
+//			g2.drawLine(x1, y-tmpY, x2, y-tmpY);
+//			g2.setColor(Color.blue);
+//			g2.drawLine(x1, y-(int)(1.0/3.0 * 30), x2, y-(int)(1.0/3.0 * 30));
+//			g2.drawLine(x1, y-(int)(2.0/3.0 * 30), x2, y-(int)(2.0/3.0 * 30));
+//			g2.setColor(Color.red);
 			if(k != 0){
 				g2.drawLine(x1, y-valueBack, x2, y-tmpY);
+				x1 += len;
+				x2 += len;
 			}
 			
 			valueBack = tmpY;
-			x1 += len;
-			x2 += len;
+		
 			
 		}
 	}
@@ -170,7 +206,6 @@ public class Map extends JPanel {
 		Font font = new Font("Arial", Font.BOLD, 14);
 		g2.setFont(font);
 		g2.setStroke(new BasicStroke(2));
-		
 		g2.drawString("Vizualizace", 30, 60);
 		
 		return img;
@@ -207,6 +242,69 @@ public class Map extends JPanel {
 		
 		
 		return img;	
+	}
+	
+	private BufferedImage drawYearScreenPlus() {
+		BufferedImage img = new BufferedImage( width, height, BufferedImage.TYPE_4BYTE_ABGR );
+		int [] regions = {11, 10, 12, 9, 7, 8, 6, 2, 4, 3, 1, 5, 0, 13};
+		int [] regCtr = {490, 290, 440, 350, 530, 350, 340, 310, 360, 180, 390, 250, 275, 130, 220, 350, 70, 210, 110, 270, 230, 265, 170, 160, 230, 225, 550, 260};
+		String t = "";
+		int tmp = 0;
+		Graphics2D g = (Graphics2D) img.getGraphics();
+		Graphics2D g2 = (Graphics2D) g;
+		g2.setColor(Color.black);
+
+		drawLegend(g2);
+		
+		for(int i = 0; i < regioComponent.length; i++){
+			ratioPlus(regions[i]);
+			regioComponent[i].setColor(setColorPlus(regions[i]));
+			if(isA){
+				t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getA()[diseaseIndex].replace(",",".") )));
+			}else{
+				t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getB()[diseaseIndex].replace(",",".") )));
+			}
+			regioComponent[i].draw(g2, max, min);
+			g2.drawString(t, regCtr[tmp++], regCtr[tmp++]);
+		}
+				
+		Font font = new Font("Arial", Font.BOLD, 14);
+		g2.setFont(font);
+		g2.setStroke(new BasicStroke(2));
+		
+		g2.drawString(String.valueOf(data.getYears()[getIndex()].getYear()), 30, 60);
+		
+		
+		return img;	
+	}
+	
+	
+	
+	private double regressionLine(int i){
+		
+		ArrayList<Double> list = new ArrayList<>();
+		double value = 0;
+		String number = "";
+		
+		int forMax = getIndex();
+		int forMin = getIndex()-2;
+		
+		if(forMin < 0){ forMin = 0; }
+		
+		
+		for(int j = forMin; j <= forMax; j++){
+			if(isA){
+				number = data.getYears()[j].getRegions()[i].getA()[diseaseIndex];
+			}else{
+				number = data.getYears()[j].getRegions()[i].getB()[diseaseIndex];
+			}
+			list.add(Double.parseDouble( number.replace(",",".") ));	
+		}
+		
+		// udelat regresni primku z hodnot v 'list'.
+		
+		return value;
+		
 	}
 	
 	private void drawLegend(Graphics2D g2){
@@ -251,9 +349,15 @@ public class Map extends JPanel {
 		Graphics2D g2 = (Graphics2D) g;
 		
 		g2.drawImage(imageYears.get(getIndex()), 0, 0, null);
-		if(getIndex() != data.getYears().length){
+		
+		
+		if(getIndex() != getCounter()){
 			minimizeImg(g2);
-			// nejaky text
+		}else{
+			Font font = new Font("Arial", Font.BOLD, 14);
+			g2.setFont(font);
+			g2.setStroke(new BasicStroke(2));
+			g2.drawString("sem musim napsat nejaky text", 150, 600);
 		}
 
 	}	
@@ -289,6 +393,11 @@ public class Map extends JPanel {
 		return color[i];
 	}
 	
+	private Color getColorPlus(int i){
+		Color[] color = {new Color(68, 151,101), new Color(74, 201, 124), new Color(79, 250, 148), new Color(175, 246, 203)};
+		return new Color(255, 255 , 255);
+	}
+	
 	private Color setColor(int i){
 		double tmp = 0;
 		String number = "";
@@ -315,6 +424,10 @@ public class Map extends JPanel {
 		return getColor(ind);
 	}
 	
+	private Color setColorPlus(int i){
+		return getColor(0);
+	}
+	
 	private void ratio(){
 		maxValue = Double.MIN_VALUE;
 		minValue = Double.MAX_VALUE;
@@ -337,6 +450,17 @@ public class Map extends JPanel {
 				minValue = tmp;
 			}
 		}
+	}
+	
+	private void ratioPlus(int reg){
+		int [] regions = {11, 10, 12, 9, 7, 8, 6, 2, 4, 3, 1, 5, 0, 13};
+		maxValuePlus = Double.MIN_VALUE;
+		minValuePlus = Double.MAX_VALUE;
+		
+		for(int i = 0; i < data.getYears().length; i++){
+			
+		}
+		
 	}
 
 	private void calculateLimits() {
@@ -397,3 +521,20 @@ public class Map extends JPanel {
 	}
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
