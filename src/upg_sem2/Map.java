@@ -9,7 +9,6 @@ import java.awt.Graphics2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -37,7 +36,7 @@ public class Map extends JPanel {
 	private final boolean isA;
 	private final boolean isPlus;
 	private int counter;
-	private ArrayList<Double> regressValue;
+	double [] regress;
 	
 	public Map(Wrap data, String [] arg){
 		this.regioComponent = this.readRegions();
@@ -49,7 +48,7 @@ public class Map extends JPanel {
 		this.isA = isA();
 		this.isPlus = isPlus();
 		this.counter = -1;
-		this.regressValue = new ArrayList<Double>();
+		this.regress = new double[data.getYears()[0].getRegions().length];
 		
 		
 		this.loadImages();
@@ -169,12 +168,6 @@ public class Map extends JPanel {
 			
 			tmpY = (int)((2.0/3.0 * 30.0 * tmp)/max);
 			
-			
-//			g2.drawLine(x1, y-tmpY, x2, y-tmpY);
-//			g2.setColor(Color.blue);
-//			g2.drawLine(x1, y-(int)(1.0/3.0 * 30), x2, y-(int)(1.0/3.0 * 30));
-//			g2.drawLine(x1, y-(int)(2.0/3.0 * 30), x2, y-(int)(2.0/3.0 * 30));
-//			g2.setColor(Color.red);
 			if(k != 0){
 				g2.drawLine(x1, y-valueBack, x2, y-tmpY);
 				x1 += len;
@@ -253,11 +246,10 @@ public class Map extends JPanel {
 		Graphics2D g = (Graphics2D) img.getGraphics();
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(Color.black);
-
-		drawLegend(g2);
+		regressionLine();
 		
 		for(int i = 0; i < regioComponent.length; i++){
-			ratioPlus(regions[i]);
+			
 			regioComponent[i].setColor(setColorPlus(regions[i]));
 			if(isA){
 				t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getA()[diseaseIndex].replace(",",".") )));
@@ -265,7 +257,7 @@ public class Map extends JPanel {
 				t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getB()[diseaseIndex].replace(",",".") )));
 			}
 			regioComponent[i].draw(g2, max, min);
-			g2.drawString(t, regCtr[tmp++], regCtr[tmp++]);
+//			g2.drawString(t, regCtr[tmp++], regCtr[tmp++]);
 		}
 				
 		Font font = new Font("Arial", Font.BOLD, 14);
@@ -280,31 +272,65 @@ public class Map extends JPanel {
 	
 	
 	
-	private double regressionLine(int i){
+	private double regressionLine(){
 		
-		ArrayList<Double> list = new ArrayList<>();
+		double [] list = new double[3];
 		double value = 0;
 		String number = "";
+		int ind = 0;
 		
 		int forMax = getIndex();
 		int forMin = getIndex()-2;
+	
 		
 		if(forMin < 0){ forMin = 0; }
-		
-		
-		for(int j = forMin; j <= forMax; j++){
-			if(isA){
-				number = data.getYears()[j].getRegions()[i].getA()[diseaseIndex];
-			}else{
-				number = data.getYears()[j].getRegions()[i].getB()[diseaseIndex];
+				
+		for(int i = 0; i < data.getYears()[0].getRegions().length-4; i++){
+			ind = 0;
+			for(int j = forMin; j <= forMax; j++){
+				if(isA){
+					number = data.getYears()[j].getRegions()[i].getA()[diseaseIndex];
+				}else{
+					number = data.getYears()[j].getRegions()[i].getB()[diseaseIndex];
+				}
+				list[ind++] = Double.parseDouble( number.replace(",",".") );	
 			}
-			list.add(Double.parseDouble( number.replace(",",".") ));	
+			regress[i] = countRegress(list);
 		}
-		
-		// udelat regresni primku z hodnot v 'list'.
+		ratioPlus(regress);
 		
 		return value;
 		
+	}
+	
+	private double countRegress(double [] array){
+		double value = 0.0;
+		double x1 = array[0];
+		double x2 = array[1];
+		double x3 = array[2];
+		double y1 = 1.0;
+		double y2 = 2.0;
+		double y3 = 3.0;
+		double b;
+		double a;
+		double y;
+		
+		if(x2 == 0 && x3 == 0){ return 0;}
+		
+		if(x3 == 0){
+			b =((2*(y1*x1+y2*x2))-((y1+y2)*(x1+x2))/(((y1+y2)*(y1*y1+y2*y2))-((y1+y2)*(y1+y2))));
+			a = ((y1+y2)/2)-(b*(x1+x2)/2);
+			y = b*2-a;
+			value = x2-y;
+			
+		}else{
+			b =((3*(y1*x1+y2*x2+y3*x3))-((y1+y2+y3)*(x1+x2+x3))/(((y1+y2+y3)*(y1*y1+y2*y2+y3*y3))-((y1+y2+y3)*(y1+y2+y3))));
+			a = ((y1+y2+y3)/3)-(b*(x1+x2+x3)/3);
+			y = b*3-a;
+			value = x3-y;
+		}
+		
+		return value;
 	}
 	
 	private void drawLegend(Graphics2D g2){
@@ -351,7 +377,7 @@ public class Map extends JPanel {
 		g2.drawImage(imageYears.get(getIndex()), 0, 0, null);
 		
 		
-		if(getIndex() != getCounter()){
+		if(getIndex() != getCounter() || data.getYears().length-1 == getCounter()){
 			minimizeImg(g2);
 		}else{
 			Font font = new Font("Arial", Font.BOLD, 14);
@@ -394,8 +420,8 @@ public class Map extends JPanel {
 	}
 	
 	private Color getColorPlus(int i){
-		Color[] color = {new Color(68, 151,101), new Color(74, 201, 124), new Color(79, 250, 148), new Color(175, 246, 203)};
-		return new Color(255, 255 , 255);
+		Color[] color = {new Color(255, 102, 102), new Color(255, 153,153), new Color(128, 255, 0), new Color(204, 255, 153)};
+		return color[i];
 	}
 	
 	private Color setColor(int i){
@@ -425,7 +451,24 @@ public class Map extends JPanel {
 	}
 	
 	private Color setColorPlus(int i){
-		return getColor(0);
+		int ind = 0;
+		double tmp = regress[i];
+		double ratio = maxValuePlus - minValuePlus;
+		
+		if(tmp == 0) { return new Color(255,255,255); }
+		
+		if(tmp >= minValuePlus && tmp <= ((1.0/4.0*ratio)+minValuePlus)){
+			ind = 3;
+		}else if(tmp < ((2.0/4.0*ratio)+minValuePlus) && tmp >= ((1.0/4.0*ratio)+minValuePlus)){
+			ind = 2;
+		}else if(tmp >= ((2.0/4.0*ratio)+minValuePlus) && tmp < ((3.0/4.0*ratio)+minValuePlus)){
+			ind = 1;
+		}else if(tmp <= maxValuePlus && tmp >= ((3.0/4.0*ratio)+minValuePlus)){
+			ind = 0;
+		}
+
+		
+		return getColorPlus(ind);
 	}
 	
 	private void ratio(){
@@ -452,15 +495,20 @@ public class Map extends JPanel {
 		}
 	}
 	
-	private void ratioPlus(int reg){
-		int [] regions = {11, 10, 12, 9, 7, 8, 6, 2, 4, 3, 1, 5, 0, 13};
+	private void ratioPlus(double [] array){
+		double tmp = 0.0;
 		maxValuePlus = Double.MIN_VALUE;
 		minValuePlus = Double.MAX_VALUE;
 		
-		for(int i = 0; i < data.getYears().length; i++){
+		for(int i = 0; i < array.length; i++){
+			tmp = array[i];
 			
+			if(tmp > maxValuePlus){
+				maxValuePlus = tmp;
+			}else if(tmp < minValuePlus){
+				minValuePlus = tmp;
+			}
 		}
-		
 	}
 
 	private void calculateLimits() {
