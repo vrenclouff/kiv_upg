@@ -1,6 +1,7 @@
 package upg_sem2;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Timer;
@@ -8,6 +9,7 @@ import java.util.TimerTask;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
@@ -27,15 +29,28 @@ public class Canvas extends JFrame {
 	
 	
 	public Canvas(Wrap data, String[] arg){
+		this.arg = arg;
 		Canvas.setData(data);
 		this.indexYear(arg[2]);
-		this.arg = arg;
 		Canvas.setDrawiMap(new Map(getData(), arg));
 	}
 	
 	private void indexYear(String year){
+		int tmp = Integer.parseInt(year);
+		
+		if(tmp == -1){
+			if(arg[1].length() > 1){
+				Component parentComponent = null;
+				JOptionPane.showConfirmDialog(parentComponent, "For sum is not virtualization.\nProgram will be closed.", "ERROR", JOptionPane.CLOSED_OPTION, JOptionPane.ERROR_MESSAGE);
+				System.exit(1);
+			}else{
+				index = getData().getYears().length;
+				return;
+			}
+		}
+		
 		for(int i = 0; i < getData().getYears().length; i++){
-			if(getData().getYears()[i].getYear() == Integer.parseInt(year)){
+			if(getData().getYears()[i].getYear() == tmp){
 				index = i;
 				break;
 			}

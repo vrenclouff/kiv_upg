@@ -36,7 +36,7 @@ public class Map extends JPanel {
 	private final boolean isA;
 	private final boolean isPlus;
 	private int counter;
-	double [] regress;
+	private double [] regress;
 	
 	public Map(Wrap data, String [] arg){
 		this.regioComponent = this.readRegions();
@@ -142,14 +142,19 @@ public class Map extends JPanel {
 		double min = Double.MAX_VALUE;
 		
 		for(int j = 0; j <= lengthYear; j++){
-			if(isA){
-				number = data.getYears()[j].getRegions()[i].getA()[diseaseIndex];
+			if(diseaseIndex != 21){
+				if(isA){
+					number = data.getYears()[j].getRegions()[i].getA()[diseaseIndex];
+				}else{
+					number = data.getYears()[j].getRegions()[i].getB()[diseaseIndex];
+				}
+				tmp = Double.parseDouble( number.replace(",",".") );
 			}else{
-				number = data.getYears()[j].getRegions()[i].getB()[diseaseIndex];
+				tmp = getCounteValue(i);
 			}
-			tmp = Double.parseDouble( number.replace(",",".") );
 			
 			if(tmp > max){
+				System.out.println(max+"   "+tmp);
 				max = tmp;
 			}else if(tmp < min){
 				min = max;
@@ -157,14 +162,17 @@ public class Map extends JPanel {
 		}
 		
 		
-		
 		for(int k = 0; k <= lengthYear; k++){
-			if(isA){
-				number = data.getYears()[k].getRegions()[i].getA()[diseaseIndex];
+			if(diseaseIndex != 21){
+				if(isA){
+					number = data.getYears()[k].getRegions()[i].getA()[diseaseIndex];
+				}else{
+					number = data.getYears()[k].getRegions()[i].getB()[diseaseIndex];
+				}
+				tmp = Double.parseDouble( number.replace(",",".") );
 			}else{
-				number = data.getYears()[k].getRegions()[i].getB()[diseaseIndex];
+				tmp = getCounteValue(i);
 			}
-			tmp = Double.parseDouble( number.replace(",",".") );
 			
 			tmpY = (int)((2.0/3.0 * 30.0 * tmp)/max);
 			
@@ -218,13 +226,18 @@ public class Map extends JPanel {
 		
 		for(int i = 0; i < regioComponent.length; i++){
 			regioComponent[i].setColor(setColor(regions[i]));
-			if(isA){
-				t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getA()[diseaseIndex].replace(",",".") )));
+			if(diseaseIndex != 21){
+				if(isA){
+					t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getA()[diseaseIndex].replace(",",".") )));
+				}else{
+					t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getB()[diseaseIndex].replace(",",".") )));
+				}
 			}else{
-				t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getB()[diseaseIndex].replace(",",".") )));
+				t = String.valueOf(Math.round(getCounteValue(i)));
 			}
 			regioComponent[i].draw(g2, max, min);
 			g2.drawString(t, regCtr[tmp++], regCtr[tmp++]);
+			
 		}
 				
 		Font font = new Font("Arial", Font.BOLD, 14);
@@ -240,24 +253,14 @@ public class Map extends JPanel {
 	private BufferedImage drawYearScreenPlus() {
 		BufferedImage img = new BufferedImage( width, height, BufferedImage.TYPE_4BYTE_ABGR );
 		int [] regions = {11, 10, 12, 9, 7, 8, 6, 2, 4, 3, 1, 5, 0, 13};
-		int [] regCtr = {490, 290, 440, 350, 530, 350, 340, 310, 360, 180, 390, 250, 275, 130, 220, 350, 70, 210, 110, 270, 230, 265, 170, 160, 230, 225, 550, 260};
-		String t = "";
-		int tmp = 0;
 		Graphics2D g = (Graphics2D) img.getGraphics();
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(Color.black);
 		regressionLine();
 		
 		for(int i = 0; i < regioComponent.length; i++){
-			
 			regioComponent[i].setColor(setColorPlus(regions[i]));
-			if(isA){
-				t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getA()[diseaseIndex].replace(",",".") )));
-			}else{
-				t = String.valueOf(Math.round(Double.parseDouble( data.getYears()[getIndex()].getRegions()[regions[i]].getB()[diseaseIndex].replace(",",".") )));
-			}
 			regioComponent[i].draw(g2, max, min);
-//			g2.drawString(t, regCtr[tmp++], regCtr[tmp++]);
 		}
 				
 		Font font = new Font("Arial", Font.BOLD, 14);
@@ -430,12 +433,16 @@ public class Map extends JPanel {
 		double ratio = maxValue - minValue;
 		int ind = 0;
 		
-		if(isA){
-			number = data.getYears()[getIndex()].getRegions()[i].getA()[diseaseIndex];
+		if(diseaseIndex != 21){
+			if(isA){
+				number = data.getYears()[getIndex()].getRegions()[i].getA()[diseaseIndex];
+			}else{
+				number = data.getYears()[getIndex()].getRegions()[i].getB()[diseaseIndex];
+			}
+			tmp = Double.parseDouble( number.replace(",",".") );
 		}else{
-			number = data.getYears()[getIndex()].getRegions()[i].getB()[diseaseIndex];
+			tmp = getCounteValue(i);
 		}
-		tmp = Double.parseDouble( number.replace(",",".") );
 		
 		if(tmp >= minValue && tmp <= ((1.0/4.0*ratio)+minValue)){
 			ind = 3;
@@ -471,27 +478,51 @@ public class Map extends JPanel {
 		return getColorPlus(ind);
 	}
 	
+	private double getCounteValue(int k){
+		double tmp = 0.0;
+		String number = "";
+		double count = 0.0;
+		
+		for(int j = 0; j < data.getYears()[getIndex()].getRegions()[0].getA().length; j++){
+			if(isA){
+				number = data.getYears()[getIndex()].getRegions()[k].getA()[j];
+			}else{
+				number = data.getYears()[getIndex()].getRegions()[k].getB()[j];
+			}
+			if(number.equals("x")){ continue; }
+			tmp = Double.parseDouble( number.replace(",",".") );
+			count += tmp;
+		}
+		return count;
+	}
+	
 	private void ratio(){
 		maxValue = Double.MIN_VALUE;
 		minValue = Double.MAX_VALUE;
 		double tmp = 0.0;
 		String number = "";
 				
-		
-		for(int i = 0; i < data.getYears()[getIndex()].getRegions().length-4; i++){
-			if(isA){
-				number = data.getYears()[getIndex()].getRegions()[i].getA()[diseaseIndex];
-			}else{
-				number = data.getYears()[getIndex()].getRegions()[i].getB()[diseaseIndex];
-			}
-			if(number.equals("x")){ continue; }
-			tmp = Double.parseDouble( number.replace(",",".") );
-			
-			if(tmp > maxValue){
-				maxValue = tmp;
-			}else if(tmp < minValue){
-				minValue = tmp;
-			}
+		if(diseaseIndex != 21){
+			for(int i = 0; i < data.getYears()[getIndex()].getRegions().length-4; i++){
+				
+				if(diseaseIndex != 21){
+					if(isA){
+					number = data.getYears()[getIndex()].getRegions()[i].getA()[diseaseIndex];
+					}else{
+						number = data.getYears()[getIndex()].getRegions()[i].getB()[diseaseIndex];
+					}
+					if(number.equals("x")){ continue; }
+					tmp = Double.parseDouble( number.replace(",",".") );		
+				}else{
+					tmp = getCounteValue(i);
+				}
+				
+				if(tmp > maxValue){
+					maxValue = tmp;
+				}else if(tmp < minValue){
+					minValue = tmp;
+				}
+			}	
 		}
 	}
 	
