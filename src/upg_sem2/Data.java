@@ -2,6 +2,11 @@ package upg_sem2;
 
 import java.util.ArrayList;
 
+/**
+ * Obsahuje hodnoty onemocneni v tabulce na radku A a B
+ * @author Lukas Cerny
+ *
+ */
 public class Data {
 	
 	private String name;

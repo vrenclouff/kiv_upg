@@ -3,7 +3,12 @@ package upg_sem2;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
+/**
+ * Obal
+ * Obsahuje pole roku
+ * @author Lukas Cerny
+ *
+ */
 class Wrap{
 	  private Years [] years;
 	  
@@ -19,6 +24,11 @@ class Wrap{
 	  }
 }
 
+/**
+ * Obsahuje pole regionu
+ * @author Lukas Cerny
+ *
+ */
 class Years{
   private int year;
   private Regions [] regions;
@@ -42,6 +52,11 @@ class Years{
   }
 }
 
+/**
+ * Obsahuje hodnoty onemocneni
+ * @author Lukas Cerny
+ *
+ */
 class Regions{
   private String name;
   private String [] a;
@@ -73,6 +88,11 @@ class Regions{
   }
 }
 
+/**
+ * Sestavi data podle zadaneho formatu
+ * @author Lukas Cerny
+ *
+ */
 public class DataObject {
 
 	

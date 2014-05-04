@@ -9,17 +9,34 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.util.Arrays;
 
+/**
+ * 
+ * @author Lukas Cerny
+ *
+ */
 public class RegionComponent {
 	
 	private Point2D.Double points[];
 	private Path2D.Double regionPath;
 	private Color color;
 	
+	/**
+	 * Konstruktor
+	 * @param regionName
+	 * @param regionColor
+	 * @param points
+	 */
 	public RegionComponent(String regionName, Color regionColor, Point2D.Double points[]){
 		this.points = Arrays.copyOf(points, points.length);
 		this.color = regionColor;
 	}
 	
+	/**
+	 * Vykresli region
+	 * @param g2
+	 * @param max
+	 * @param min
+	 */
 	public void draw(Graphics2D g2, Point2D.Double max, Point2D.Double min) {
 		int padding = 300;
 		int regionHeight = 60;
@@ -36,6 +53,13 @@ public class RegionComponent {
 		g2.setTransform(origTransform);
 	}	
 	
+	/**
+	 * Prepocita XY hodnoty pro dany region
+	 * @param width
+	 * @param height
+	 * @param max
+	 * @param min
+	 */
 	private void createTransformedRegionPath(int width, int height, Point2D.Double max, Point2D.Double min) {
 		Point2D.Double pointsTransformed[] = new Point2D.Double[points.length];
 				
@@ -74,6 +98,10 @@ public class RegionComponent {
 		this.regionPath.closePath();
 	}
 	
+	/**
+	 * Vykresli region
+	 * @param g2
+	 */
 	private void drawRegion(Graphics2D g2) {		
 		
 		g2.setStroke(new BasicStroke(1));

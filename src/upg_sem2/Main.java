@@ -3,8 +3,19 @@ package upg_sem2;
 import java.awt.Component;
 import javax.swing.JOptionPane;
 
+/**
+ * Spousti program a overuje vstupni parametry
+ * @author Lukas Cerny
+ *
+ */
+
 public class Main {
 	
+	/**
+	 * Overi vstupni parametry
+	 * @param arg
+	 * @param wraper
+	 */
 	private void inputCheck(String [] arg, Wrap wraper){
 		String [] disease  = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV",
 				"XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "CELKEM"};
@@ -19,7 +30,7 @@ public class Main {
 		
 		boolean diseaseBl = false;
 		for(int i = 0; i < disease.length; i++){
-			if(!arg[0].equals(disease[i])){diseaseBl = true;}
+			if(arg[0].equals(disease[i])){ diseaseBl = true;}
 		}
 		if(!diseaseBl){
 			JOptionPane.showConfirmDialog(parentComponent, "Disease not valid (I - XXI) \nProgram will be closed", "ERROR", JOptionPane.CLOSED_OPTION, JOptionPane.ERROR_MESSAGE);
@@ -45,6 +56,10 @@ public class Main {
 		}
 	}	
 	
+	/**
+	 * Spousti program
+	 * @param arg
+	 */
 	public static void main(String [] arg){
 		GetJsonFile json = new GetJsonFile();
 		Main mn = new Main();

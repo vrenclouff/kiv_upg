@@ -8,6 +8,11 @@ import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
+/**
+ * Nacte hodnoty do objektu ze souboru file.json s pouzitim knihovny
+ * @author Lukas Cerny
+ *
+ */
 public class GetJsonFile {
 
 	public Wrap importJson(){	 

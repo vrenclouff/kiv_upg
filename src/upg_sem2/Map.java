@@ -15,6 +15,12 @@ import java.util.Scanner;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+/**
+ * 
+ * @author Lukas Cerny
+ *
+ */
+
 public class Map extends JPanel {
 	
 	
@@ -38,6 +44,11 @@ public class Map extends JPanel {
 	private int counter;
 	private double [] regress;
 	
+	/**
+	 * Konstruktor - nastavuje atributy, ktere jsou potreba pro beh programu
+	 * @param data - vstupni JSON soubor
+	 * @param arg - vstupni parametry
+	 */
 	public Map(Wrap data, String [] arg){
 		this.regioComponent = this.readRegions();
 		this.calculateLimits();
@@ -56,6 +67,10 @@ public class Map extends JPanel {
 		this.setPreferredSize(this.getSize());
 	}
 	
+	/**
+	 * Overi, zda bereme v uvahu hodnoty absolutni pocty pripadu hospitalizaci nebo pocty pripadu na 100 000 obyvatel
+	 * @return true/false
+	 */
 	private boolean isA(){
 		char c = arg[1].charAt(0);
 		boolean value = false;
@@ -66,6 +81,10 @@ public class Map extends JPanel {
 		}
 		return value;
 	}
+	/**
+	 * Overi, zda se vykresli trend vyvoje
+	 * @return true/false
+	 */
 	private boolean isPlus(){
 		boolean value = false;
 		
@@ -76,6 +95,44 @@ public class Map extends JPanel {
 		return value;
 	}
 	
+	/**
+	 * Nazvy onemocneni pro vypis
+	 * @param i - druh onemocneni
+	 * @return nazev onemocneni
+	 */
+	private String diseaseName(int i){
+		String [] diseaseText = {
+	/*1*/		"Některé infekční a parazitární nemoci",
+	/*2*/		"Novotvary",
+	/*3*/		"Nemoci krve, krvetvorných orgánů a imunity",
+	/*4*/		"Nemoci endokrinní, výživy a přeměny látek",
+	/*5*/		"Poruchy duševní a poruchy chování",
+	/*6*/		"Nemoci nervové soustavy",
+	/*7*/		"Nemoci oka a očních adnex",
+	/*8*/		"Nemoci ucha a bradavkového výběžku",
+	/*9*/		"Nemoci oběhové soustavy",
+	/*10*/		"Nemoci dýchací soustavy",
+	/*11*/		"Nemoci trávicí soustavy",
+	/*12*/		"Nemoci kůže a podkožního vaziva",
+	/*13*/		"Nemoci svalové a kosterní soustavy a pojivové tkáně",
+	/*14*/		"Nemoci močové a pohlavní soustavy",
+	/*15*/		"Těhotenství, porod a šestinedělí",
+	/*16*/		"Některé stavy vzniklé v perinatálním období",
+	/*17*/		"Vrozené vady, deformace a chromosomální abnormality",
+	/*18*/		"Příznaky, znaky a nálezy nezařazené jinde",
+	/*19*/		"Poranění, otravy a následky vnějších příčin",
+	/*20*/		"Název neuveden",
+	/*21*/		"Faktory ovlivňující zdravotní stav a kontakt se zdravotnickými službami",
+	/*CELKEM*/  "Celkový počet hospitalizací"
+		};
+		return diseaseText[i];
+	}
+	
+	/**
+	 * Vrati index onemocneni, se kterym pracuji v celem programu
+	 * @param tmp - string onemocneni
+	 * @return index onemocneni
+	 */
 	private int getDiseaseIndex(String tmp){
 		String [] disease  = {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII", "XIII", "XIV",
 				"XV", "XVI", "XVII", "XVIII", "XIX", "XX", "XXI", "CELKEM"};
@@ -87,19 +144,38 @@ public class Map extends JPanel {
 		}
 		return value;
 	}
+	/**
+	 * Vraci index roku
+	 * @return
+	 */
 	public int getIndex() {
 		return index;
 	}
+	/**
+	 * Nastavi idnex roku na hodnotu
+	 * @param index
+	 */
 	public void setIndex(int index) {
 		this.index = index;
 	}
+	/**
+	 * Vrati tru/false zda uzivatel v parametru zadal + (trend)
+	 * @return
+	 */
 	public boolean getIsPlus(){
 		return isPlus;
 	}
+	/**
+	 * Vrati pocet snimku, ktere se zobrazuji (minRok - maxRok, + vizualizace)
+	 * @return
+	 */
 	public int getCounter(){
 		return counter;
 	}
 	
+	/**
+	 * Nacte vizualizaci v jednotlivych letech do pole
+	 */
 	private void loadImages(){
 		int tmp = data.getYears().length;
 		if(!isPlus){
@@ -120,6 +196,13 @@ public class Map extends JPanel {
 		
 	}
 	
+	/**
+	 * Vykresli graf pro dany region na XY souradnicich
+	 * @param g2 - graficky kontext
+	 * @param x - souradnice x
+	 * @param y - souradnice y
+	 * @param i - index regionu
+	 */
 	private void drawGraf(Graphics2D g2, int x, int y, int i){
 		
 		
@@ -187,6 +270,10 @@ public class Map extends JPanel {
 		}
 	}
 	
+	/**
+	 * Vytvori mapu celkove vizualizace (parametr -1)
+	 * @return
+	 */
 	private BufferedImage drawVisual(){
 		int [] regCtr = {465, 280, 440, 350, 530, 350, 340, 310, 360, 180, 390, 250, 275, 140, 220, 350, 70, 210, 110, 290, 230, 270, 170, 170, 460, 100, 550, 260};
 		int [] regions = {11, 10, 12, 9, 7, 8, 6, 2, 4, 3, 1, 5, 0, 13};
@@ -203,14 +290,14 @@ public class Map extends JPanel {
 		}
 		g2.setColor(Color.black);
 		g2.drawString("Praha", 460, 115);
-		Font font = new Font("Arial", Font.BOLD, 14);
-		g2.setFont(font);
-		g2.setStroke(new BasicStroke(2));
-		g2.drawString("Vizualizace", 30, 60);
 		
 		return img;
 	}
 	
+	/**
+	 * Vytvori mapu poctu hospitalizaci v danem roce
+	 * @return
+	 */
 	private BufferedImage drawYearScreen() {
 		BufferedImage img = new BufferedImage( width, height, BufferedImage.TYPE_4BYTE_ABGR );
 		int [] regions = {11, 10, 12, 9, 7, 8, 6, 2, 4, 3, 1, 5, 0, 13};
@@ -242,13 +329,17 @@ public class Map extends JPanel {
 		Font font = new Font("Arial", Font.BOLD, 14);
 		g2.setFont(font);
 		g2.setStroke(new BasicStroke(2));
-		
+		g2.drawString(diseaseName(diseaseIndex), 30, 30);
 		g2.drawString(String.valueOf(data.getYears()[getIndex()].getYear()), 30, 60);
 		
 		
 		return img;	
 	}
 	
+	/**
+	 * Vytvori mapu poctu hospitalizaci v horizontu 3 let (trend)
+	 * @return
+	 */
 	private BufferedImage drawYearScreenPlus() {
 		BufferedImage img = new BufferedImage( width, height, BufferedImage.TYPE_4BYTE_ABGR );
 		int [] regions = {11, 10, 12, 9, 7, 8, 6, 2, 4, 3, 1, 5, 0, 13};
@@ -265,7 +356,7 @@ public class Map extends JPanel {
 		Font font = new Font("Arial", Font.BOLD, 14);
 		g2.setFont(font);
 		g2.setStroke(new BasicStroke(2));
-		
+		g2.drawString(diseaseName(diseaseIndex), 30, 30);
 		g2.drawString(String.valueOf(data.getYears()[getIndex()].getYear()), 30, 60);
 		
 		
@@ -273,7 +364,10 @@ public class Map extends JPanel {
 	}
 	
 	
-	
+	/**
+	 * Vypocte pres metodu nejmensich ctvercu hodnotu pro dany region
+	 * @return
+	 */
 	private double regressionLine(){
 		
 		double [] list = new double[3];
@@ -304,7 +398,11 @@ public class Map extends JPanel {
 		return value;
 		
 	}
-	
+	/**
+	 * Vypocet regresni primky
+	 * @param array - pole o 3 hodnotach
+	 * @return
+	 */
 	private double countRegress(double [] array){
 		double value = 0.0;
 		double x1 = array[0];
@@ -335,6 +433,10 @@ public class Map extends JPanel {
 		return value;
 	}
 	
+	/**
+	 * Vykresli legendu
+	 * @param g2
+	 */
 	private void drawLegend(Graphics2D g2){
 		String str;
 				
@@ -371,7 +473,9 @@ public class Map extends JPanel {
 		
 	}
 	
-
+	/**
+	 * Vykresluje mapu
+	 */
 	public void paint(Graphics g) {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
@@ -385,11 +489,21 @@ public class Map extends JPanel {
 			Font font = new Font("Arial", Font.BOLD, 14);
 			g2.setFont(font);
 			g2.setStroke(new BasicStroke(2));
-			g2.drawString("sem musim napsat nejaky text", 150, 600);
+
+			int yearMin = data.getYears()[0].getYear();
+			int yearMax = data.getYears()[data.getYears().length-1].getYear();
+			String text = "Počet případů hospitalizace v letech "+String.valueOf(yearMin)+" - "+String.valueOf(yearMax)+" v ČR";
+			g2.drawString(text, 80, 550);
+			g2.drawString(diseaseName(diseaseIndex), 80, 600);
+			
 		}
 
 	}	
 	
+	/**
+	 * Vykresli male mapy
+	 * @param g2 - graficky kontext
+	 */
 	private void minimizeImg(Graphics2D g2){
 		int widthImg = width/6;
 		int ratio = width/height;
@@ -416,16 +530,31 @@ public class Map extends JPanel {
 		}
 	}
 	
+	/**
+	 * Vybere barvu na danem index
+	 * @param i - index vyberu barvy
+	 * @return
+	 */
 	private Color getColor(int i){
 		Color[] color = {new Color(68, 151,101), new Color(74, 201, 124), new Color(79, 250, 148), new Color(175, 246, 203)};
 		return color[i];
 	}
 	
+	/**
+	 * Vybere barvu pro trend na danem index
+	 * @param i - index vyberu barvy
+	 * @return
+	 */
 	private Color getColorPlus(int i){
 		Color[] color = {new Color(255, 102, 102), new Color(255, 153,153), new Color(128, 255, 0), new Color(204, 255, 153)};
 		return color[i];
 	}
 	
+	/**
+	 * Nastavuje barvu, ktera nejlepe vystihuje danou hodnotu
+	 * @param i
+	 * @return
+	 */
 	private Color setColor(int i){
 		double tmp = 0;
 		String number = "";
@@ -456,6 +585,11 @@ public class Map extends JPanel {
 		return getColor(ind);
 	}
 	
+	/**
+	 * Nastavuje barvu, ktera nejlepe vystihuje danou hodnotu pro trend
+	 * @param i
+	 * @return
+	 */
 	private Color setColorPlus(int i){
 		int ind = 0;
 		double tmp = regress[i];
@@ -472,11 +606,15 @@ public class Map extends JPanel {
 		}else if(tmp <= maxValuePlus && tmp >= ((3.0/4.0*ratio)+minValuePlus)){
 			ind = 0;
 		}
-
-		
 		return getColorPlus(ind);
 	}
 	
+	/**
+	 * Spocte celkovy pocet onemocneni pro dany kraj
+	 * @param k - index kraje
+	 * @param ind - index roku
+	 * @return
+	 */
 	private double getCounteValue(int k, int ind){
 		double tmp = 0.0;
 		String number = "";
@@ -490,11 +628,15 @@ public class Map extends JPanel {
 			}
 			if(number.equals("x")){ continue; }
 			tmp = Double.parseDouble( number.replace(",",".") );
+
 			count += tmp;
 		}
 		return count;
 	}
 	
+	/**
+	 * Zjisti max a min pro dany rok
+	 */
 	private void ratio(){
 		maxValue = Double.MIN_VALUE;
 		minValue = Double.MAX_VALUE;
@@ -533,6 +675,10 @@ public class Map extends JPanel {
 		}
 	}
 	
+	/**
+	 * Zjisti max a min pro vyvoj trendu
+	 * @param array - pole vypoctu trendu v danem roce
+	 */
 	private void ratioPlus(double [] array){
 		double tmp = 0.0;
 		maxValuePlus = Double.MIN_VALUE;
@@ -548,7 +694,10 @@ public class Map extends JPanel {
 			}
 		}
 	}
-
+	
+	/**
+	 * Nastavi max a min hodnoty pro vykresleni mapy
+	 */
 	private void calculateLimits() {
 		
 		max = (Point2D.Double) regioComponent[0].getPoints()[0].clone();
@@ -562,6 +711,10 @@ public class Map extends JPanel {
 		}
 	}
 	
+	/**
+	 * Nacte regiony ze souboru a ulozi do pole
+	 * @return
+	 */
 	private RegionComponent[] readRegions(){
 		ArrayList<RegionComponent> region = new ArrayList<>();
 		Scanner sc = null;

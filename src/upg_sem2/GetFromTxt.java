@@ -6,6 +6,12 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+
+/**
+ * Nacte vsechny soubory txt do zadaneho formatu objektu
+ * @author Lukas Cerny
+ *
+ */
 public class GetFromTxt {
 	
 	private String[] file(){
@@ -78,6 +84,11 @@ public class GetFromTxt {
 }
 }
 
+/**
+ * 
+ * @author Lukas Cerny
+ *
+ */
 class Roky{
 	String rok;
 	Data [] data;

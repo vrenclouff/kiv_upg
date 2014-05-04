@@ -4,6 +4,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import com.google.gson.Gson;
  
+/**
+ * Vytvori file.json z nactenych hodnot z txt
+ * @author Lukas Cerny
+ *
+ */
 public class SetJsonFile {
     public static void main(String[] args) {
  
