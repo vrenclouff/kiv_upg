@@ -10,7 +10,7 @@ import java.awt.geom.Point2D.Double;
 import java.util.Arrays;
 
 /**
- * 
+ * Komponenta pro vykresleni regionu
  * @author Lukas Cerny
  *
  */

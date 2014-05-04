@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
- * 
+ * Vykresluje mapu
  * @author Lukas Cerny
  *
  */

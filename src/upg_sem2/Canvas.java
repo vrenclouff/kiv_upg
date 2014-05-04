@@ -13,7 +13,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
- * 
+ * JFrame pro mapu
  * @author Lukas Cerny
  *
  */

@@ -85,7 +85,7 @@ public class GetFromTxt {
 }
 
 /**
- * 
+ * Pomocny objekt pro roky
  * @author Lukas Cerny
  *
  */
